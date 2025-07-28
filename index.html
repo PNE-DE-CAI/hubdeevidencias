@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub de EVIDÊNCIAS-CAIEIRAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variáveis CSS para cores */
+        :root {
+            --primary: #4F46E5;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #1F2937;
+            --light: #F9FAFB;
+        }
+        
+        /* Estilos globais para o corpo do documento */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+        }
+        
+        /* Estilos para as pastas principais */
+        .folder {
+            transition: all 0.3s ease; /* Transição suave para hover */
+            border-left: 4px solid transparent; /* Borda esquerda transparente */
+        }
+        
+        /* Estilos de hover para as pastas principais */
+        .folder:hover {
+            transform: translateX(5px); /* Desloca a pasta para a direita */
+            border-left-color: var(--primary); /* Muda a cor da borda esquerda */
+            background-color: rgba(79, 70, 229, 0.05); /* Adiciona um fundo suave */
+        }
+        
+        /* Estilos para as subpastas */
+        .subfolder {
+            transition: all 0.3s ease; /* Transição suave para hover */
+            border-left: 4px solid transparent; /* Borda esquerda transparente */
+        }
+        
+        /* Estilos de hover para as subpastas */
+        .subfolder:hover {
+            transform: translateX(5px); /* Desloca a subpasta para a direita */
+            border-left-color: var(--secondary); /* Muda a cor da borda esquerda */
+            background-color: rgba(16, 185, 129, 0.05); /* Adiciona um fundo suave */
+        }
+        
+        /* Contêiner das subpastas (escondido por padrão) */
+        .tree-container {
+            max-height: 0; /* Altura máxima zero para esconder */
+            overflow: hidden; /* Esconde o conteúdo que transborda */
+            transition: max-height 0.3s ease-out; /* Transição suave para a altura máxima */
+        }
+        
+        /* Quando o contêiner está aberto */
+        .tree-container.open {
+            max-height: 1000px; /* Altura máxima grande para mostrar o conteúdo */
+            /* Pode ser ajustado para um valor maior se houver muitas subpastas */
+        }
+        
+        /* Animação de rotação para ícones (ex: setas) */
+        .rotate-180 {
+            transform: rotate(180deg); /* Gira o elemento em 180 graus */
+        }
+
+        /* Animação de giro */
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Keyframes para a animação de giro */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Estilos para o botão de upload */
+        .upload-btn {
+            transition: all 0.2s ease; /* Transição suave para hover */
+        }
+        
+        /* Estilos de hover para o botão de upload */
+        .upload-btn:hover {
+            transform: translateY(-2px); /* Desloca o botão para cima */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra */
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Cabeçalho da página -->
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-bold text-indigo-700 mb-2">HUB DE EVIDÊNCIAS - CAIEIRAS</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">Centralize seus REGISTROS importantes em um só lugar. Acesse as pastas e subpastas para upload e organização, as fotos ou links devem estar no documento Word ja inserido na pasta.</p>
+        </header>
+        
+        <!-- Seção de Pesquisa e Upload -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div class="relative w-full md:w-1/2">
+                <input type="text" placeholder="Pesquisar pasta..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+            <!-- Botão de Upload Direto - abre o modal -->
+            <button onclick="window.open('https://drive.google.com/drive/folders/1Of0Bp7ZPxQw-CDDoFTiR4tSwr6ewVaHV?usp=drive_link')" class="upload-btn bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Direto
+            </button>
+        </div>
+        
+        <!-- Pastas Principais -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!-- Pasta 1: Plano de Ação -->
+            <div class="border-b border-gray-200 last:border-b-0">
+                <div class="folder p-4 flex justify-between items-center cursor-pointer" onclick="toggleFolder('plano-acao')">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-folder text-indigo-500 text-2xl"></i>
+                        <div>
+                            <h3 class="font-semibold text-lg">Plano de Ação</h3>
+                            <p class="text-sm text-gray-500">6 subpastas • Última atualização: hoje</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="plano-acao-arrow"></i>
+                </div>
+                
+                <div class="tree-container" id="plano-acao">
+                    <div class="pl-8 pr-4 pb-4 space-y-2">
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 1</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1v0F2_Ifx5XSTWFMDBKj3AYg--fBpgHQY?usp=sharing" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 2</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1jRXqE8KbOyC8IlF8TY9pug9N7paQMzpo?usp=sharing" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 3</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example3" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 4</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example4" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 5</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example5" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 6</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example6" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pasta 2: PECs cai -->
+            <div class="border-b border-gray-200 last:border-b-0">
+                <div class="folder p-4 flex justify-between items-center cursor-pointer" onclick="toggleFolder('pecs')">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-folder text-amber-500 text-2xl"></i>
+                        <div>
+                            <h3 class="font-semibold text-lg">PECs - Escolas de Caieiras </h3>
+                            <p class="text-sm text-gray-500">14 Escolas • Última atualização: ontem</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="pecs-arrow"></i>
+                </div>
+                
+                <div class="tree-container" id="pecs">
+                    <div class="pl-8 pr-4 pb-4 space-y-2">
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ALADINO POLON</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1_rx72jiBwb8aNTc4jtNnTyexUZ-7tcRT?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ALBERTO GRAF – CAPITÃO</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/16osIMk4PnJyVUriKt1vPrCD0JAFp8ay3?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ALBINO FIORE</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1tsxPpVMndNETPdE4dJoKYW0556eOcBQy?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ALFRIED THEODOR WEISZFLOG</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1EAPZGorg8yros5jVbsn1Dxu0ec9fZdo0?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ARMANDO SESTINI</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1mmJZpMlB02LqqCK_2qcKoldfWOepuw0F?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. FRANCISCO GONÇALVES VIEIRA – PROFº</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1vJT0kmefA_EjjCayv9uVSXQIp0nz4RKj?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ISAÍAS LUIZ MATIAZZO</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1aI3avijNgeAeW_h9CE4LNAn4O9tf4Ctt?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ISAURA VALENTINI HANSER – PROFª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1Z2ReFd5Lj2CUnffJ4_j48LU3FKiLnAM8?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. JOSÉ CARLOS DA SILVA JUNIOR</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1zaAeIYYK16lIZTC95CYIIyMj2DfY5dYN?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. MARIO TOLEDO DE MORAES – DR.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1KezZE2eECzsmUtLO0YD4NMAbpWk2FW3Y?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. NELSON MANZANARES – DR.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1KRZVri3R_Waq5xURqCZeH9Avy-U1US6R?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. OLINDO DÁRTORA – DR.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1NWhtaFJrHxVh-0vQN5h_j0-6Ssf5LHe7?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. OTTO WEISZFLOG</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1NxA8wjgHKfYy1WPtFYHDififszVDGBh2?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. WALTHER WEISZFLOG</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1jBboEsbmhWmHM6ngYoWBeW_jC2603bX1?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <!-- Pasta 2: PECs caj -->
+            <div class="border-b border-gray-200 last:border-b-0">
+                <div class="folder p-4 flex justify-between items-center cursor-pointer" onclick="toggleFolder('pecs_caj')">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-folder text-amber-500 text-2xl"></i>
+                        <div>
+                            <h3 class="font-semibold text-lg">PECs - Escolas de Cajamar </h3>
+                            <p class="text-sm text-gray-500">05 Escoças • Última atualização: ontem</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="pecs-arrow"></i>
+                </div>
+                
+                <div class="tree-container" id="pecs_caj">
+                    <div class="pl-8 pr-4 pb-4 space-y-2">
+                     </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ANA MARIA GARRIDO ORLANDIN – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1YsgkkLjuHpQSV94IFK0s0yP76VvOcQNQ?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ÉLCIO JOSÉ PEREIRA COTRIM – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1HN3Pa0gX3DY7sGbCpHbANXun3A9cymr8?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. JOAQUIM MARQUES DA SILVA SOBRINHO – TTE.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/19N7GPelOuv5pWMHTVUQkw2KmlC17PK2F?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. SUZANA DIAS</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1qd44n169_LAnn20GthnPU6wk3VEvERgn?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. WALTER RIBAS DE ANDRADE – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/11sogmKGoadaeViIli4NyjGz96NKtLySs?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                    </div>       
+            </div>
+            <!-- Pasta 2: PECs Morato -->
+             <div class="border-b border-gray-200 last:border-b-0">
+                <div class="folder p-4 flex justify-between items-center cursor-pointer" onclick="toggleFolder('pecs_morato')">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-folder text-amber-500 text-2xl"></i>
+                        <div>
+                            <h3 class="font-semibold text-lg">PECs - Escolas de Francisco Morato </h3>
+                            <p class="text-sm text-gray-500">17 Escolas • Última atualização: ontem</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="pecs-arrow"></i>
+                </div>              
+                 <div class="tree-container" id="pecs_morato">
+                    <div class="pl-8 pr-4 pb-4 space-y-2">
+                     </div>
+                        
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. AFONSO MORENO</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/19e7tQY_b6rQ5EUBQPKkPBkOQA85FmHGX?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. APARECIDO ROBERTO TONELLOTTI – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1OWHPjf9CgV3WA0A2q9IRJPF8nB1MK4jU?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. BELÉM DA SERRA</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1wgWUS3wTyXlxd9B7NU8jcw_9qr85c7KB?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. BUENO DE AZEVEDO FILHO – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1wACbyvM3jkfdd7Ii5hBv7L0XF_NM-Cwh?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. CELESTINA VALENTE LENGENFELDER – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1EALMVXVpdgOowCX1lkOG37und0RgCovX?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. CHÁCARA CAMPONESA/ Jd Vassouras</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/183g1GM7tkxP1nuNGGvPL6ecmHLRPz0y_?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. JARDIM ALEGRIA II</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1ULhkmBYt--TgeJlQpMZ7J8AgBnoDrdwI?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. JARDIM DAS ROSAS</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1dwX6gzitOAa7N0hDZ2jMLEvMZtKQTQLY?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. JARDIM SILVIA II</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1S9hlSOINQMlNCVFo3gaXv5kMqcx4k2ei?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. JOSÉ DE BARROS MARTINS – EDITOR</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1MI7urXwOydI5RGxOU90_8RLdga4AoFgp?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. LENITA CORRÊA CAMARGO – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1tsorLg2QvyVAReYdMjZibJAWQnAnjXTa?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. LYDIA SCALET WALKER – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1LTYPY2HSiFBMh4o-zP-mBMNTcYFspnbu?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. PARQUE CENTO E VINTE II</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1WGCAsqxSYzenrsxtjh_3Lp8BZhMNfzPg?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. PEDRO PAULO AGUIAR</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1iN1B829T6zJpgE68Q1FmO9eRghQypq_X?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ROGÉRIO LEVORIN – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1rBYwfbM_1G1F0kiEPVvZuW8GO44XYeVe?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ULYSSES SANCHES RAMIRES – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1xaZxzjIlcZzC4SkfJlS6VpNj-X_iF7Be?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. VINCENZO LOBASSI</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1ZD1GZT7bvVuV8gbRWxMcZ-tL6XWMvY4i?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+         <!-- Pasta 2: PECs Fco_Rocha -->
+           <div class="border-b border-gray-200 last:border-b-0">
+            <div class="folder p-4 flex justify-between items-center cursor-pointer" onclick="toggleFolder('pecs_rocha')">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-folder text-amber-500 text-2xl"></i>
+                    <div>
+                        <h3 class="font-semibold text-lg">PECs - Escolas de Franco da Rocha </h3>
+                        <p class="text-sm text-gray-500">17 Escolas • Última atualização: ontem</p>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="pecs-arrow"></i>
+            </div>              
+             <div class="tree-container" id="pecs_rocha">
+                <div class="pl-8 pr-4 pb-4 space-y-2">
+                 </div>
+                
+                    <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ADAIL JARBAS DUCLOS</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1yhIZgQN6bEJyV2g_MJOD08wWboVlonTJ?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. AZEVEDO SOARES</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1eYzsC-T9GYyeDPM9TOcMONuhx0crd2TT?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. BENEDITO APARECIDO TAVARES – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/13kwo181x0Pirv91GgIddyw4GIaSBRaU6?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. BENEDITO FAGUNDES MARQUES</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/162X0v-weG8EpcfVg3mKkZtlqYN2JVM2a?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. DOMINGOS CAMBIAGHI – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1EDihPBZLgv1MwPP1zP2lA4yE0C1qOwCY?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ELVIRA PARADA MANGA – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1JLvmVhFHWmHWRdnvrG-heakbf4IpEs87?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. IRACI SARTORI VIEIRA DA SILVA – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1s0mFKf2orZ-8ZifEGY5Y3G9y2VTc0ICl?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ISAURA DE MIRANDA BOTTO – PROFª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1SLEf0SGrqE_z1uDqcIxihweSjtV6rWJf?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. IVONE DOS ANJOS DA SILVA CAMPOS – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/106Qof293u7d1KNgVqveRArx-l8QXxPAd?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. JOCIMARA VIEIRA DA SILVA – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1jaLi0CxzhXHiSC8DkL4ZDB-_j7l-bk8N?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. KÁTIA MARIA TARIFA LEME TONELLI – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1xBqpg29GMhOv3v0ex2Jib8JD3P6PvThM?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. LUIZ ALEXANDRE DOS SANTOS – VEREADOR</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1K95X_cPVtRnTS_kUnlkL8vhHkIZ18Xbj?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. JOSÉ PARADA – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1wsnpP1zHpjQNkoW2Y9CbqcTmElOVqrfk?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. PAULO DUARTE</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1DBzb51lRXQWZswQGAdjWTlzdsey_tcBa?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. PEDRO LELIS DE SOUZA – PREFEITO</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/1ZmG9IPmea3RC6fKihYqFXvcPPETTRX9C?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. RITUCO MITANI – PROF.ª</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/12zGY1SGJCEkorlUi6ibd2cw5nUb5BCBP?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>E.E. ZILTON BICUDO – PROF.</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/16TfLI6Sgg93FwId7NwoQ5ERnS7v1dD9t?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                       <!-- Pasta 2.1: PECs -->
+            <div class="border-b border-gray-200 last:border-b-0">
+                <div class="folder p-4 flex justify-between items-center cursor-pointer" onclick="toggleFolder('pecs_maripora')">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-folder text-amber-500 text-2xl"></i>
+                        <div>
+                            <h3 class="font-semibold text-lg">PECs - Escolas de mairiporã </h3>
+                            <p class="text-sm text-gray-500">14 Escolas • Última atualização: ontem</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="pecs-arrow"></i>
+                </div>
+                
+                <div class="tree-container" id="pecs_maripora">
+                    <div class="pl-8 pr-4 pb-4 space-y-2">
+                         <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. ARTHUR WEINGRILL</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/16QrmWno73CKnAmYcX5bjR7zmL3RuL6ni?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. BAIRRO DO ITAIM</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1PNpuLYVJa_xYn1X0gziaN5l8pjkcomhu?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. BAIRRO JUNDIAIZINHO</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1sSwRZXGkDCjzC31iewrmDkGoIbMWEXwq?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. CARLOS AUGUSTO DE PÁDUA FLEURY – PROF.</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1N7SRVrmNYmBOX2koSu9zqKN59VXHfYP_?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. HERMELINA DE ALBUQUERQUE PASSARELLA – PROF.ª</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1Zwqcy45ycLqB01H0JKdLNp8jvYYNdTCJ?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. JARDIM SÃO FRANCISCO</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1cWW2iZmw_zqdBmgYvX1LkgUP67P0YZjl?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. JOSÉ ROBERTO MELCHIOR – DR.</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1FZXRIDabPVRAS1lwv4RZr4c-gnfBNONX?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. MARIA ZEZA GOMES DE OLIVEIRA</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1G75C13iwuB3oEevv6AagOhSDCqffFROq?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. NAIR HANNICKEL ROMARO</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1lkxkAlHvsuVCHXihtoxnzeKr8woehqS6?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. NIDE ZAIM CARDOSO – PROF.ª</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1Sq1_Zr7P2x6SNOZliVro7uqaH5Gd3Vxh?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. ODARICO OLIVEIRA NASCIMENTO – PROF.</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1s9631VA1f-fsurPqOHf6jN_oAeHAYYUl?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. OZILDE ALBUQUERQUE PASSARELLA – DR.</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1tSxFbq-y-G9EZ44nruwlanWAaqUdrIDi?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. PEDRO GALRÃO DO NASCIMENTO</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1iHUc6Y9nZsL2S8IIcgR_30HAySrqvCCU?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                            <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-folder text-emerald-500"></i>
+                                    <span>E.E. PIETRO PETRI</span>
+                                </div>
+                                <a href="https://drive.google.com/drive/folders/1Dq0ubhOJingOwPDG6zC5MRLF0ovKbCHT?usp=drive_link" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                    Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Pasta 3: Formação -->
+            <div class="border-b border-gray-200 last:border-b-0">
+                <div class="folder p-4 flex justify-between items-center cursor-pointer" onclick="toggleFolder('formacao')">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-folder text-purple-500 text-2xl"></i>
+                        <div>
+                            <h3 class="font-semibold text-lg">Formação</h3>
+                            <p class="text-sm text-gray-500">6 subpastas • Última atualização: 2 dias atrás</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="formacao-arrow"></i>
+                </div>
+                
+                <div class="tree-container" id="formacao">
+                    <div class="pl-8 pr-4 pb-4 space-y-2">
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 1</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example13" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 2</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example14" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 3</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example15" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 4</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example16" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 5</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example17" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 6</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example18" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pasta 4: Orientação -->
+            <div class="border-b border-gray-200 last:border-b-0">
+                <div class="folder p-4 flex justify-between items-center cursor-pointer" onclick="toggleFolder('orientacao')">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-folder text-rose-500 text-2xl"></i>
+                        <div>
+                            <h3 class="font-semibold text-lg">Orientação</h3>
+                            <p class="text-sm text-gray-500">6 subpastas • Última atualização: semana passada</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="orientacao-arrow"></i>
+                </div>
+                
+                <div class="tree-container" id="orientacao">
+                    <div class="pl-8 pr-4 pb-4 space-y-2">
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 1</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example19" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 2</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example20" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 3</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example21" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 4</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example22" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 5</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example23" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="subfolder p-3 rounded-lg flex justify-between items-center bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-folder text-emerald-500"></i>
+                                <span>Subpasta 6</span>
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/example24" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                Acessar <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            
+        <!-- Atividade Recente -->
+        <div class="mt-12">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Atividade Recente</h2>
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center gap-4 pb-4 border-b border-gray-200">
+                    <div class="bg-indigo-100 p-3 rounded-full">
+                        <i class="fas fa-file-upload text-indigo-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium">Novo arquivo adicionado</p>
+                        <p class="text-sm text-gray-500">Plano de Ação • Subpasta 3 • 2 horas atrás</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 py-4 border-b border-gray-200">
+                    <div class="bg-emerald-100 p-3 rounded-full">
+                        <i class="fas fa-folder-plus text-emerald-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium">Nova subpasta criada</p>
+                        <p class="text-sm text-gray-500">Formação • Subpasta 7 • Ontem</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 pt-4">
+                    <div class="bg-amber-100 p-3 rounded-full">
+                        <i class="fas fa-file-download text-amber-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium">Arquivo baixado</p>
+                        <p class="text-sm text-gray-500">Orientação • Subpasta 2 • 3 dias atrás</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+    
+    <!-- Modal de Upload (escondido por padrão) -->
+    <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Upload de Arquivo</h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
+                <i class="fas fa-cloud-upload-alt text-4xl text-indigo-500 mb-3"></i>
+                <p class="mb-2">Arraste e solte arquivos aqui</p>
+                <p class="text-sm text-gray-500 mb-4">ou</p>
+                <!-- Botão para selecionar arquivos - pode ser conectado a um input type="file" real -->
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
+                    Selecione arquivos
+                </button>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancelar
+                </button>
+                <!-- Botão de Enviar - pode ser conectado a uma função de upload real -->
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
+                    Enviar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Função para alternar a visibilidade das subpastas
+        function toggleFolder(folderId) {
+            const folderContent = document.getElementById(folderId); // O contêiner das subpastas
+            const arrowIcon = document.getElementById(`${folderId}-arrow`); // O ícone da seta
+
+            // Alterna a classe 'open' para controlar a altura máxima
+            folderContent.classList.toggle('open');
+            // Alterna a classe 'rotate-180' para girar a seta
+            arrowIcon.classList.toggle('rotate-180');
+        }
+
+        // Função para abrir o modal de upload
+        function openModal() {
+            const modal = document.getElementById('uploadModal');
+            modal.classList.remove('hidden'); // Remove a classe 'hidden' para mostrar o modal
+        }
+
+        // Função para fechar o modal de upload
+        function closeModal() {
+            const modal = document.getElementById('uploadModal');
+            modal.classList.add('hidden'); // Adiciona a classe 'hidden' para esconder o modal
+        }
+
+        // Adiciona um listener ao documento para fechar o modal ao clicar fora dele
+        document.addEventListener('click', (event) => {
+            const modal = document.getElementById('uploadModal');
+            const modalContent = modal.querySelector('.bg-white'); // O conteúdo visível do modal
+
+            // Verifica se o modal está visível e se o clique foi fora do conteúdo do modal
+            if (!modal.classList.contains('hidden') && !modalContent.contains(event.target) && event.target !== document.querySelector('.upload-btn')) {
+                closeModal();
+            }
+        });
+
+        // Opcional: Adicionar funcionalidade de pesquisa (exemplo básico)
+        document.querySelector('input[type="text"]').addEventListener('keyup', function(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            const folders = document.querySelectorAll('.folder'); // Seleciona todas as pastas principais
+
+            folders.forEach(folder => {
+                const folderTitle = folder.querySelector('h3').textContent.toLowerCase();
+                const subfolders = folder.nextElementSibling.querySelectorAll('.subfolder'); // Seleciona as subpastas dentro do contêiner
+
+                let folderMatch = folderTitle.includes(searchTerm);
+                let subfolderMatch = false;
+
+                subfolders.forEach(subfolder => {
+                    const subfolderTitle = subfolder.querySelector('span').textContent.toLowerCase();
+                    if (subfolderTitle.includes(searchTerm)) {
+                        subfolder.style.display = 'flex'; // Mostra a subpasta se houver correspondência
+                        subfolderMatch = true;
+                    } else {
+                        subfolder.style.display = 'none'; // Esconde a subpasta se não houver correspondência
+                    }
+                });
+
+                // Mostra a pasta principal se houver correspondência no título ou em alguma subpasta
+                if (folderMatch || subfolderMatch) {
+                    folder.style.display = 'flex'; // Mostra a pasta principal
+                    // Se a pasta principal corresponder ou alguma subpasta, abre o contêiner
+                    if (folderMatch || subfolderMatch) {
+                        folder.nextElementSibling.classList.add('open');
+                        folder.querySelector('.fa-chevron-down').classList.add('rotate-180');
+                    }
+                } else {
+                    folder.style.display = 'none'; // Esconde a pasta principal
+                    folder.nextElementSibling.classList.remove('open'); // Garante que o contêiner esteja fechado
+                    folder.querySelector('.fa-chevron-down').classList.remove('rotate-180');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
